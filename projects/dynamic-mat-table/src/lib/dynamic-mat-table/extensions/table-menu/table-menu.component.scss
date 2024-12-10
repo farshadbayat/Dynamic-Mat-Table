@@ -65,7 +65,7 @@
   outline: none;
   border: none;
   line-height: 48px;
-  height: 48px;  
+  height: 48px;
   display: flex;
   flex-wrap: nowrap;
   width: 100%;
@@ -296,6 +296,7 @@
   }
   mat-icon {
     line-height: 48px !important;
+    height: 48px;
   }
 }
 
