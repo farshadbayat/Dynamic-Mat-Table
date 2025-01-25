@@ -31,7 +31,7 @@
 }
 
 @mixin progress {
-  .mat-header-row.progress {
+  mat-header-row.progress {
     border: none;
     max-height: 4px;
     min-height: 4px;
@@ -76,13 +76,19 @@
 }
 
 @mixin dmf-class {
-
   // remove botton padding
   ::ng-deep .dmf {
     min-width: 100%;
   }
 
-  ::ng-deep dynamic-mat-table cdk-virtual-scroll-viewport .cdk-virtual-scroll-content-wrapper .mat-table mat-row .mat-cell mat-form-field {
+  ::ng-deep
+    dynamic-mat-table
+    cdk-virtual-scroll-viewport
+    .cdk-virtual-scroll-content-wrapper
+    .mat-table
+    mat-row
+    .mat-cell
+    mat-form-field {
     max-width: 100%;
 
     .mat-form-field-wrapper {
@@ -204,6 +210,7 @@
   }
 }
 
-.disable-backdrop-click .cdk-overlay-backdrop.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
+.disable-backdrop-click
+  .cdk-overlay-backdrop.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
   pointer-events: none;
 }

@@ -1,4 +1,5 @@
 # dynamic-mat-table
+
 test
 Dynamic tables built with angular material.
 
@@ -27,16 +28,16 @@ Column types are defined as follow:
 export interface AbstractField {
   index?: number;
   name: string; // The key of the data
-  type?: 'text' | 'number' | 'date' | 'category'; // Type of data in the field
+  type?: "text" | "number" | "date" | "category"; // Type of data in the field
   width?: number; // width of column
   header?: string; // The title of the column
   print?: boolean; // disply in printing view by defualt is true
   isKey?: boolean;
   inlineEdit?: boolean;
-  display?: 'visible' | 'hidden' | 'prevent-hidden'; // Hide and visible this column
-  sticky?: 'start' | 'end' | 'none'; // sticky this column to start or end
-  filter?: 'client-side' | 'server-side' | 'none';
-  sort?: 'client-side' | 'server-side' | 'none';
+  display?: "visible" | "hidden" | "prevent-hidden"; // Hide and visible this column
+  sticky?: "start" | "end" | "none"; // sticky this column to start or end
+  filter?: "client-side" | "server-side" | "none";
+  sort?: "client-side" | "server-side" | "none";
   cellClass?: string; // Apply a class to a cell, class name must be in the data
 }
 ```
@@ -48,7 +49,7 @@ export interface TableRow {
   id?: number;
   isOpen?: boolean;
   rowClass?: string;
-  actionMenu?: { [key: string]: ActionMenu; };
+  actionMenu?: { [key: string]: ActionMenu };
 }
 ```
 
@@ -64,26 +65,7 @@ this.dataSource = new TableVirtualScrollDataSource(data);
 In the HTML add the selector:
 
 ```html
-<dynamic-mat-table tableName="demo_table"
-                      [columns]="fields"
-                      [dataSource]="dataSource"
-                      [sticky]="stickyHeader"
-                      [showNoData]="showNoData"
-                      [showProgress]="showProgress"
-                      [pending]="pending"
-                      [selection]="tableSelection"
-                      [pagination]="pagination"
-                      [pagingMode]="'server'"
-                      [class.conditional-class]="conditinalClass"
-                      [setting]="setting"                      
-                      [dir]="direction"
-                      [printConfig]="printConfig"
-                      [actionMenu]="actionMenu"
-                      (settingChange)="table_onChangeSetting($event)"
-                      (rowActionMenuChange)="table_onRowActionChange($event)"
-                      (rowClick)="table_onRowClick($event)"
-                      > 
-  </dynamic-mat-table>
+<dynamic-mat-table tableName="demo_table" [columns]="fields" [dataSource]="dataSource" [sticky]="stickyHeader" [showNoData]="showNoData" [showProgress]="showProgress" [pending]="pending" [selection]="tableSelection" [pagination]="pagination" [pagingMode]="'server'" [class.conditional-class]="conditinalClass" [setting]="setting" [dir]="direction" [printConfig]="printConfig" [actionMenu]="actionMenu" (settingChange)="table_onChangeSetting($event)" (rowActionMenuChange)="table_onRowActionChange($event)" (rowClick)="table_onRowClick($event)"> </dynamic-mat-table>
 ```
 
 Inputs:
@@ -99,6 +81,7 @@ Inputs:
 `pagingMode` = paging mode ('none' | 'client' | 'server')
 
 `class.conditional-class` = apply custom style. eg:
+
 ```style
   /* Conditional Class & Overwrite Style */
   :host ::ng-deep .conditional-class .mat-table .row-selection{
@@ -119,6 +102,7 @@ Inputs:
 `dir` = rtl/ltr.
 `printConfig` = print configuration. eg: { title: 'Print All Test Data' , showParameters: true }
 `actionMenu` = show action menu on each row and can change menu parameters: suppose
+
 ```javascript
   this.actionMenu.push(
     { name: 'Edit', text: 'Edit', color: 'primary', icon: 'edit', disabled: false, visible: true},
@@ -126,108 +110,9 @@ Inputs:
   Customize for one record:
   this.dataSource.allData[0].actionMenu = { Edit: { text: 'View', color: 'primary', icon: 'build_circle'}, Delete: {visible: false}};
 ```
+
 `settingChange` = Output all configuration of columns
 `rowActionMenuChange` = Output for action menu that clicked
 `rowClick` = Output for the click event on the row
 
 For more examples run the demo application.
-
-## How to add international
-to support new language you must declare new class and implement LanguagePack for example this is persian language:
-```javascript
-import { MatPaginatorIntl } from '@angular/material/paginator';
-import { FilterLabels, LanguagePack, MenuLabels, TableLabels } from 'dynamic-mat-table';
-export class PersionLanguage implements LanguagePack {
-
-  constructor() {
-  }
-
-  menuLabels: MenuLabels = {
-    saveData: 'ذخیره داده ها ',
-    columnSetting: 'تنظیمات ستون ها ',
-    saveTableSetting: 'ذخیره  تنظیمات جدول',
-    clearFilter: 'فیلتر را پاک کنید',
-    jsonFile: 'Json فایل',
-    csvFile: 'CSV فایل',
-    printTable: 'چاپ جدول',
-    filterMode: 'نوع فیلتر',
-    filterLocalMode: 'محلی',
-    filterServerMode: 'سرور',
-    sortMode: 'حالت مرتب سازی',
-    sortLocalMode: 'سمت کاربر',
-    sortServerMode: 'سمت سرور',
-    printMode: 'حالت چاپ',
-    printYesMode: 'بله',
-    printNoMode: 'خیر',
-    pinMode: 'حالت پین ',
-    pinNoneMode: 'هیچ کدام',
-    pinStartMode: 'شروع',
-    pinEndMode: 'پایان',
-  };
-
-  paginatorLabels: MatPaginatorIntl = {
-    changes: null,
-    itemsPerPageLabel: 'ایتم های هر صفحه:',
-    nextPageLabel: 'صفحه بعدی:',
-    previousPageLabel: 'صفحه قبلی:',
-    firstPageLabel: 'اولین صفحه:',
-    lastPageLabel: 'آخرین صفحه:',
-    getRangeLabel : (page: number, pageSize: number, length: number) => {
-      if (length === 0 || pageSize === 0) { return `0 از ${length}`; }
-      length = Math.max(length, 0);
-      const startIndex = page * pageSize;
-      const endIndex = startIndex < length ?
-          Math.min(startIndex + pageSize, length) :
-          startIndex + pageSize;
-      return `${startIndex + 1} - ${endIndex} از ${length}`;
-    }
-  };
-
-  tableLabels: TableLabels =
-  {
-    NoData: 'هیچ رکوردی پیدا نشد'
-  };
-
-  filterLabels: FilterLabels = {
-    Clear: 'پاک کردن',
-    Search: 'جستجو',
-    And: 'و',
-    Or: 'یا',
-    /* Text Compare */
-    Text: 'متن',
-    TextContains: 'دربرگرفتن',
-    TextEmpty: 'خالی بودن',
-    TextStartsWith: 'شروع شدن با',
-    TextEndsWith: ' پایان گرفتن با',
-    TextEquals: 'مساوی بودن',
-    TextNotEmpty: 'خالی نبودن',
-    /* Number Compare */
-    Number: 'تعداد',
-    NumberEquals: 'مساوی',
-    NumberNotEquals: 'مساوی نبودن',
-    NumberGreaterThan: ' بزرگ تر از',
-    NumberLessThan: 'کم تر از ',
-    NumberEmpty: 'خالی بودن',
-    NumberNotEmpty: 'خالی نبودن',
-    /* Category List Compare */
-    CategoryContains: 'در برگرفتن',
-    CategoryNotContains: 'در بر نگرفتن',
-    /* Boolean Compare */
-    /* Date Compare */
-  };
-}
-```
-
-and passed this class to grid so :
-
-```javascript
- providers: [
-    { provide: TableIntl, useFactory: languageIntl}
-  ]
-```
-And
-```javascript
-export function languageIntl() {
-  return new PersionLanguage();
-}
-```

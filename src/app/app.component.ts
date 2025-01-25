@@ -1,24 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from "@angular/core";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements OnInit
-{
+export class AppComponent implements OnInit {
+  constructor() {}
 
-  constructor()
-  {
-  }
+  ngOnInit(): void {}
 
-  ngOnInit(): void
-  {
-  }
-
-  onTabChanged(e)
-  {
-  }
-
-
+  onTabChanged(e) {}
 }

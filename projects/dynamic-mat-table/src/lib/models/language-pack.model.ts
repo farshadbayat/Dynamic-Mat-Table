@@ -1,25 +1,8 @@
-import { MatPaginatorIntl } from '@angular/material/paginator';
-
-export interface LanguagePack {
-  tableLabels: TableLabels;
-  filterLabels: FilterLabels;
-  paginatorLabels: MatPaginatorIntl;
-  menuLabels: MenuLabels;
-}
+import { MatPaginatorIntl } from "@angular/material/paginator";
 
 export interface TableLabels {
   NoData: string;
 }
-
-export interface PaginatorLabels {
-  itemsPerPageLabel: string;
-  nextPageLabel: string;
-  previousPageLabel: string;
-  firstPageLabel: string;
-  lastPageLabel: string;
-  getRangeLabel: (page: number, pageSize: number, length: number) => string;
-}
-
 export interface FilterLabels {
   Clear: string;
   Search: string;

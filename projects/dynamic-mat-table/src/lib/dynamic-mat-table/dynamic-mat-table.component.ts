@@ -15,13 +15,13 @@ import {
   ComponentRef,
   HostBinding,
   ChangeDetectionStrategy,
-} from '@angular/core';
-import { TableCoreDirective } from '../cores/table.core.directive';
-import { TableService } from './dynamic-mat-table.service';
-import { TableField } from '../models/table-field.model';
-import { AbstractFilter } from './extensions/filter/compare/abstract-filter';
-import { HeaderFilterComponent } from './extensions/filter/header-filter.component';
-import { MatDialog } from '@angular/material/dialog';
+} from "@angular/core";
+import { TableCoreDirective } from "../cores/table.core.directive";
+import { TableService } from "./dynamic-mat-table.service";
+import { TableField } from "../models/table-field.model";
+import { AbstractFilter } from "./extensions/filter/compare/abstract-filter";
+import { HeaderFilterComponent } from "./extensions/filter/header-filter.component";
+import { MatDialog } from "@angular/material/dialog";
 import {
   trigger,
   transition,
@@ -30,33 +30,32 @@ import {
   query,
   stagger,
   state,
-} from '@angular/animations';
-import { ResizeColumn } from '../models/resize-column.mode';
-import { TableIntl } from '../international/table-Intl';
-import { TableMenuActionChange } from './extensions/table-menu/table-menu.component';
+} from "@angular/animations";
+import { ResizeColumn } from "../models/resize-column.mode";
+import { TableMenuActionChange } from "./extensions/table-menu/table-menu.component";
 import {
   CdkDragDrop,
   CdkDragStart,
   moveItemInArray,
-} from '@angular/cdk/drag-drop';
-import { HashMap, isNullorUndefined } from '../cores/type';
-import { SettingItem, TableSetting } from '../models/table-setting.model';
-import { delay, filter } from 'rxjs/operators';
-import { FixedSizeTableVirtualScrollStrategy } from '../cores/fixed-size-table-virtual-scroll-strategy';
-import { Subscription } from 'rxjs';
-import { MatMenuTrigger } from '@angular/material/menu';
-import { ContextMenuItem } from '../models/context-menu.model';
+} from "@angular/cdk/drag-drop";
+import { HashMap, isNullorUndefined } from "../cores/type";
+import { SettingItem, TableSetting } from "../models/table-setting.model";
+import { delay, filter } from "rxjs/operators";
+import { FixedSizeTableVirtualScrollStrategy } from "../cores/fixed-size-table-virtual-scroll-strategy";
+import { Subscription } from "rxjs";
+import { MatMenuTrigger } from "@angular/material/menu";
+import { ContextMenuItem } from "../models/context-menu.model";
 import {
   Overlay,
   OverlayContainer,
   OverlayPositionBuilder,
   OverlayRef,
-} from '@angular/cdk/overlay';
-import { requestFullscreen } from '../utilizes/html.helper';
-import { TooltipComponent } from '../tooltip/tooltip.component';
-import { ComponentPortal } from '@angular/cdk/portal';
-import { PageEvent } from '@angular/material/paginator';
-import { TableRow } from '../models/table-row.model';
+} from "@angular/cdk/overlay";
+import { requestFullscreen } from "../utilizes/html.helper";
+import { TooltipComponent } from "../tooltip/tooltip.component";
+import { ComponentPortal } from "@angular/cdk/portal";
+import { PageEvent } from "@angular/material/paginator";
+import { TableRow } from "../models/table-row.model";
 
 export const tableAnimation = trigger("tableAnimation", [
   transition("void => *", [
@@ -97,19 +96,16 @@ export const expandAnimation = trigger("detailExpand", [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DynamicMatTableComponent<T extends TableRow>
-extends TableCoreDirective<T>
+  extends TableCoreDirective<T>
   implements OnInit, AfterViewInit, OnDestroy
 {
   @ViewChild("tbl", { static: true }) tbl;
   @Input()
-  get setting()
-  {
+  get setting() {
     return this.tableSetting;
   }
-  set setting(value: TableSetting)
-  {
-    if (!isNullorUndefined(value))
-    {
+  set setting(value: TableSetting) {
+    if (!isNullorUndefined(value)) {
       value.alternativeRowStyle =
         value.alternativeRowStyle || this.tableSetting.alternativeRowStyle;
       value.columnSetting =
@@ -124,13 +120,16 @@ extends TableCoreDirective<T>
       value.autoHeight = value.autoHeight || this.tableSetting.autoHeight;
       value.saveSettingMode =
         value.saveSettingMode || this.tableSetting.saveSettingMode || "simple";
-      this.pagination.pageSize = value.pageSize || this.tableSetting.pageSize || this.pagination.pageSize;
+      this.pagination.pageSize =
+        value.pageSize ||
+        this.tableSetting.pageSize ||
+        this.pagination.pageSize;
       /* Dynamic Cell must update when setting change */
-      value?.columnSetting?.forEach((column) =>
-      {
-        const originalColumn = this.columns?.find((c) => c.name === column.name);
-        if (originalColumn)
-        {
+      value?.columnSetting?.forEach((column) => {
+        const originalColumn = this.columns?.find(
+          (c) => c.name === column.name
+        );
+        if (originalColumn) {
           column = { ...originalColumn, ...column };
         }
       });
@@ -163,20 +162,17 @@ extends TableCoreDirective<T>
   constructor(
     public dialog: MatDialog,
     private renderer: Renderer2,
-    public languagePack: TableIntl,
     public tableService: TableService,
     public cdr: ChangeDetectorRef,
     public overlay: Overlay,
     private overlayContainer: OverlayContainer,
     private overlayPositionBuilder: OverlayPositionBuilder,
     public readonly config: TableSetting
-  )
-  {
+  ) {
     super(tableService, cdr, config);
     this.overlayContainer
       .getContainerElement()
-      .addEventListener("contextmenu", (e) =>
-      {
+      .addEventListener("contextmenu", (e) => {
         e.preventDefault();
         return false;
       });
@@ -186,11 +182,9 @@ extends TableCoreDirective<T>
         delay(150),
         filter((data) => data.e.columnIndex >= 0) /* Checkbox Column */
       )
-      .subscribe((data) =>
-      {
+      .subscribe((data) => {
         let i = data.e.columnIndex;
-        if (data.e.resizeHandler === "left")
-        {
+        if (data.e.resizeHandler === "left") {
           const visibleColumns = this.columns.filter(
             (c) => c.display !== "hidden" && c.index < data.e.columnIndex
           );
@@ -199,19 +193,20 @@ extends TableCoreDirective<T>
         // this.columns[i].width = data.w;
         const unit = this.columns[i].widthUnit || "px";
         let style = "";
-        if (this.columns[i].minWidth)
-        {
+        if (this.columns[i].minWidth) {
           data.w = Math.min(this.columns[i].minWidth, data.w);
         }
-        if (unit === "px")
-        {
+        if (unit === "px") {
           style = data.w + "px";
-        } else if (unit === "%")
-        {
-          const widthChanges = (this.tableSetting.columnSetting[i].width ?? 0) - data.w;
-          console.log(this.tableSetting.columnSetting[i].width, data.w, widthChanges);
+        } else if (unit === "%") {
+          const widthChanges =
+            (this.tableSetting.columnSetting[i].width ?? 0) - data.w;
+          console.log(
+            this.tableSetting.columnSetting[i].width,
+            data.w,
+            widthChanges
+          );
           style = `calc( ${this.columns[i].widthPercentage}% + ${widthChanges}px)`;
-
         }
         this.columns[i].style = {
           ...this.columns[i].style,
@@ -219,20 +214,17 @@ extends TableCoreDirective<T>
           "min-width": style,
         };
         /* store latest width in setting if exists */
-        if (this.tableSetting.columnSetting[i])
-        {
+        if (this.tableSetting.columnSetting[i]) {
           this.tableSetting.columnSetting[i].width = data.w;
         }
         this.refreshGrid();
       });
   }
 
-  ngAfterViewInit(): void
-  {
+  ngAfterViewInit(): void {
     this.tvsDataSource.paginator = this.paginator;
     this.tvsDataSource.sort = this.sort;
-    this.dataSource.subscribe((x) =>
-    {
+    this.dataSource.subscribe((x) => {
       x = x || [];
       this.rowSelectionModel.clear();
       this.tvsDataSource.data = [];
@@ -244,8 +236,7 @@ extends TableCoreDirective<T>
       // });
     });
 
-    this.tvsDataSource.sort.sortChange.subscribe((sort) =>
-    {
+    this.tvsDataSource.sort.sortChange.subscribe((sort) => {
       this.pagination.pageIndex = 0;
       this.onTableEvent.emit({ event: "SortChanged", sender: sort });
     });
@@ -256,14 +247,10 @@ extends TableCoreDirective<T>
     row: any,
     elementRef: any,
     show: boolean
-  )
-  {
-    if (column.cellTooltipEnable === true)
-    {
-      if (show === true && row[column.name])
-      {
-        if (this.overlayRef !== null)
-        {
+  ) {
+    if (column.cellTooltipEnable === true) {
+      if (show === true && row[column.name]) {
+        if (this.overlayRef !== null) {
           this.closeTooltip();
         }
 
@@ -282,10 +269,12 @@ extends TableCoreDirective<T>
         this.overlayRef = this.overlay.create({ positionStrategy });
 
         const option = {
-          providers: [{
-            provide: "tooltipConfig",
-            useValue: row[column.name],
-          }],
+          providers: [
+            {
+              provide: "tooltipConfig",
+              useValue: row[column.name],
+            },
+          ],
         };
 
         const injector = Injector.create(option);
@@ -293,26 +282,21 @@ extends TableCoreDirective<T>
           this.overlayRef.attach(
             new ComponentPortal(TooltipComponent, null, injector)
           );
-        setTimeout(() =>
-        {
+        setTimeout(() => {
           tooltipRef.destroy();
         }, 5000);
-      } else if (show === false && this.overlayRef !== null)
-      {
+      } else if (show === false && this.overlayRef !== null) {
         this.closeTooltip();
       }
     }
   }
 
-  closeTooltip()
-  {
+  closeTooltip() {
     this.overlayRef?.detach();
     this.overlayRef = null;
   }
-  ellipsis(column: TableField<T>, cell: boolean = true)
-  {
-    if (cell === true && column.cellEllipsisRow > 0)
-    {
+  ellipsis(column: TableField<T>, cell: boolean = true) {
+    if (cell === true && column.cellEllipsisRow > 0) {
       return {
         display: "-webkit-box",
         "-webkit-line-clamp": column?.cellEllipsisRow,
@@ -320,8 +304,7 @@ extends TableCoreDirective<T>
         overflow: "hidden",
         "white-space": "pre-wrap",
       };
-    } else if (cell === true && column.headerEllipsisRow > 0)
-    {
+    } else if (cell === true && column.headerEllipsisRow > 0) {
       return {
         display: "-webkit-box",
         "-webkit-line-clamp": column?.headerEllipsisRow,
@@ -332,31 +315,24 @@ extends TableCoreDirective<T>
     }
   }
 
-  indexTrackFn = (index: number) =>
-  {
+  indexTrackFn = (index: number) => {
     return index;
   };
 
-  trackColumn(index: number, item: TableField<T>): string
-  {
+  trackColumn(index: number, item: TableField<T>): string {
     return `${item.index}`;
   }
 
-  ngOnDestroy(): void
-  {
-    if (this.eventsSubscription)
-    {
+  ngOnDestroy(): void {
+    if (this.eventsSubscription) {
       this.eventsSubscription.unsubscribe();
     }
   }
 
-  public refreshUI()
-  {
-    if (this.tableSetting.autoHeight === true)
-    {
+  public refreshUI() {
+    if (this.tableSetting.autoHeight === true) {
       this.height = this.autoHeight();
-    } else
-    {
+    } else {
       this.height = null;
     }
     this.refreshColumn(this.tableColumns);
@@ -368,129 +344,103 @@ extends TableCoreDirective<T>
     this.cdr.detectChanges();
   }
 
-  ngOnInit()
-  {
-    setTimeout(() =>
-    {
+  ngOnInit() {
+    setTimeout(() => {
       this.init = true;
     }, 1000);
     const scrollStrategy: FixedSizeTableVirtualScrollStrategy =
       this.viewport["_scrollStrategy"];
 
-    scrollStrategy.offsetChange.subscribe((offset) => { });
-    this.viewport.renderedRangeStream.subscribe((t) =>
-    {
+    scrollStrategy.offsetChange.subscribe((offset) => {});
+    this.viewport.renderedRangeStream.subscribe((t) => {
       // in expanding row scrolling make not good appearance therefor close it.
       if (
         this.expandedElement &&
         this.expandedElement.option &&
         this.expandedElement.option.expand
-      )
-      {
+      ) {
         // this.expandedElement.option.expand = false;
         // this.expandedElement = null;
       }
     });
   }
 
-  public get inverseOfTranslation(): number
-  {
-    if (!this.viewport || !this.viewport["_renderedContentOffset"])
-    {
+  public get inverseOfTranslation(): number {
+    if (!this.viewport || !this.viewport["_renderedContentOffset"]) {
       return -0;
     }
     let offset = this.viewport["_renderedContentOffset"];
     return -offset;
   }
 
-  headerClass(column: TableField<T>)
-  {
+  headerClass(column: TableField<T>) {
     return column?.classNames;
   }
 
-  rowStyle(row)
-  {
+  rowStyle(row) {
     let style: any = row?.option?.style || {};
-    if (this.setting.alternativeRowStyle && row.id % 2 === 0)
-    {
+    if (this.setting.alternativeRowStyle && row.id % 2 === 0) {
       // style is high priority
       style = { ...this.setting.alternativeRowStyle, ...style };
     }
-    if (this.setting.rowStyle)
-    {
+    if (this.setting.rowStyle) {
       style = { ...this.setting.rowStyle, ...style };
     }
     return style;
   }
 
-  cellClass(option, column)
-  {
+  cellClass(option, column) {
     let className = null;
-    if (option && column.name)
-    {
+    if (option && column.name) {
       className = option[column.name] ? option[column.name].style : null;
     }
 
-    if (className === null)
-    {
+    if (className === null) {
       return column.cellClass;
-    } else
-    {
+    } else {
       return { ...className, ...column.cellClass };
     }
   }
 
-  cellStyle(option: HashMap<any>, column)
-  {
+  cellStyle(option: HashMap<any>, column) {
     let style = null;
-    if (option && column.name)
-    {
+    if (option && column.name) {
       style = option[column.name] ? option[column.name].style : null;
     }
     /* consider to column width resize */
-    if (style === null)
-    {
+    if (style === null) {
       return { ...column.cellStyle, ...column.style };
-    } else
-    {
+    } else {
       return { ...style, ...column.cellStyle, ...column?.style };
     }
   }
 
-  cellIcon(option, cellName)
-  {
-    if (option && cellName)
-    {
+  cellIcon(option, cellName) {
+    if (option && cellName) {
       return option[cellName] ? option[cellName].icon : null;
-    } else
-    {
+    } else {
       return null;
     }
   }
 
-  filter_onChanged(column: TableField<T>, filter: AbstractFilter[])
-  {
+  filter_onChanged(column: TableField<T>, filter: AbstractFilter[]) {
     this.pending = true;
-    this.tvsDataSource.setFilter(column.name, filter).subscribe(() =>
-    {
+    this.tvsDataSource.setFilter(column.name, filter).subscribe(() => {
       this.clearSelection();
       this.pending = false;
     });
   }
 
   currentContextMenuSender: any = {};
-  onContextMenu(event: MouseEvent, column: TableField<T>, row: any)
-  {
+  onContextMenu(event: MouseEvent, column: TableField<T>, row: any) {
     if (
       this.currentContextMenuSender?.time &&
       new Date().getTime() - this.currentContextMenuSender.time < 500
-    )
-    {
+    ) {
       return;
     }
     this.contextMenu.closeMenu();
-    if (this.contextMenuItems?.length === 0)
-    {
+    if (this.contextMenuItems?.length === 0) {
       return;
     }
     event.preventDefault();
@@ -510,8 +460,7 @@ extends TableCoreDirective<T>
     this.contextMenu.openMenu();
   }
 
-  onContextMenuItemClick(data: ContextMenuItem)
-  {
+  onContextMenuItemClick(data: ContextMenuItem) {
     this.contextMenu.menuData.item = data;
     this.onRowEvent.emit({
       event: "ContextMenuClick",
@@ -519,104 +468,98 @@ extends TableCoreDirective<T>
     });
   }
 
-  tableMenuActionChange(e: TableMenuActionChange)
-  {
-    if (e.type === "TableSetting")
-    {
-      this.settingChange.emit({ type: 'apply', setting: this.tableSetting });      
+  tableMenuActionChange(e: TableMenuActionChange) {
+    if (e.type === "TableSetting") {
+      this.settingChange.emit({ type: "apply", setting: this.tableSetting });
       this.refreshColumn(this.tableSetting.columnSetting);
-    } else if (e.type === "DefaultSetting")
-    {
-      (this.setting.settingList || []).forEach((setting) =>
-      {
-        if (setting.settingName === e.data)
-        {
+    } else if (e.type === "DefaultSetting") {
+      (this.setting.settingList || []).forEach((setting) => {
+        if (setting.settingName === e.data) {
           setting.isDefaultSetting = true;
-        } else
-        {
+        } else {
           setting.isDefaultSetting = false;
         }
       });
-      this.settingChange.emit({ type: 'default', setting: this.tableSetting });
-    } else if (e.type === "SaveSetting")
-    {      
+      this.settingChange.emit({ type: "default", setting: this.tableSetting });
+    } else if (e.type === "SaveSetting") {
       const newSetting = Object.assign({}, this.setting);
       delete newSetting.settingList;
       newSetting.settingName = e.data;
       const settingIndex = (this.setting.settingList || []).findIndex(
         (f) => f.settingName === e.data
       );
-      if (settingIndex === -1)
-      {
+      if (settingIndex === -1) {
         this.setting.settingList.push(JSON.parse(JSON.stringify(newSetting)));
-        this.settingChange.emit({ type: 'create', setting: this.tableSetting });
-      } else
-      {
+        this.settingChange.emit({ type: "create", setting: this.tableSetting });
+      } else {
         this.setting.settingList[settingIndex] = JSON.parse(
           JSON.stringify(newSetting)
         );
-        this.settingChange.emit({ type: 'save', setting: this.tableSetting });
+        this.settingChange.emit({ type: "save", setting: this.tableSetting });
       }
-    } else if (e.type === "DeleteSetting")
-    {
+    } else if (e.type === "DeleteSetting") {
       this.setting.settingList = this.setting.settingList.filter(
         (s) => s.settingName !== e.data.settingName
       );
-      this.setting.columnSetting.filter(f => f.display === 'hidden').forEach(f => f.display = 'visible');
+      this.setting.columnSetting
+        .filter((f) => f.display === "hidden")
+        .forEach((f) => (f.display = "visible"));
       this.refreshColumn(this.setting.columnSetting);
-      this.settingChange.emit({ type: 'delete', setting: this.tableSetting });
-    } else if (e.type === "SelectSetting")
-    {
-      if(e.data != null) {
+      this.settingChange.emit({ type: "delete", setting: this.tableSetting });
+    } else if (e.type === "SelectSetting") {
+      if (e.data != null) {
         let setting: SettingItem = null;
-        this.setting.settingList.forEach((s) =>
-        {
-          if (s.settingName === e.data)
-          {
+        this.setting.settingList.forEach((s) => {
+          if (s.settingName === e.data) {
             s.isCurrentSetting = true;
             setting = Object.assign(
               {},
               this.setting.settingList.find((s) => s.settingName === e.data)
             );
-          } else
-          {
+          } else {
             s.isCurrentSetting = false;
           }
         });
         setting.settingList = this.setting.settingList;
         delete setting.isCurrentSetting;
         delete setting.isDefaultSetting;
-        if (this.pagingMode !== 'none' && this.pagination.pageSize != setting?.pageSize)
-        {
+        if (
+          this.pagingMode !== "none" &&
+          this.pagination.pageSize != setting?.pageSize
+        ) {
           this.pagination.pageSize =
             setting?.pageSize || this.pagination.pageSize;
           this.paginationChange.emit(this.pagination);
         }
         /* Dynamic Cell must update when setting change */
-        setting.columnSetting?.forEach((column) =>
-        {
-          const originalColumn = this.columns.find((c) => c.name === column.name);
+        setting.columnSetting?.forEach((column) => {
+          const originalColumn = this.columns.find(
+            (c) => c.name === column.name
+          );
           column = { ...originalColumn, ...column };
         });
         this.tableSetting = setting;
         this.refreshColumn(this.setting.columnSetting);
-        this.settingChange.emit({ type: 'select', setting: this.tableSetting });
+        this.settingChange.emit({ type: "select", setting: this.tableSetting });
       } else {
         const columns = [];
-        this.columns.forEach( c =>{
+        this.columns.forEach((c) => {
           columns.push(Object.assign({}, c));
         });
         this.refreshColumn(columns);
         this.refreshUI();
       }
-    } else if (e.type === "FullScreenMode")
-    {
+    } else if (e.type === "FullScreenMode") {
       requestFullscreen(this.tbl.elementRef);
-    } else if (e.type === "Download")
-    {
+    } else if (e.type === "Download") {
       this.onTableEvent.emit({
-        event: 'ExportData',
-        sender: { type: e.data, columns: this.columns, data: this.tvsDataSource.filteredData, dataSelection: this.rowSelectionModel}
+        event: "ExportData",
+        sender: {
+          type: e.data,
+          columns: this.columns,
+          data: this.tvsDataSource.filteredData,
+          dataSelection: this.rowSelectionModel,
+        },
       });
       // if (e.data === "CSV")
       // {
@@ -629,15 +572,18 @@ extends TableCoreDirective<T>
       // {
       //   this.tableService.exportToJson(this.tvsDataSource.filteredData);
       // }
-    } else if (e.type === "FilterClear")
-    {
+    } else if (e.type === "FilterClear") {
       this.tvsDataSource.clearFilter();
       this.headerFilterList.forEach((hf) => hf.clearColumn_OnClick());
-    } else if (e.type === "Print")
-    {
+    } else if (e.type === "Print") {
       this.onTableEvent.emit({
-        event: 'ExportData',
-        sender: { type: 'Print', columns: this.columns, data: this.tvsDataSource.filteredData, dataSelection: this.rowSelectionModel}
+        event: "ExportData",
+        sender: {
+          type: "Print",
+          columns: this.columns,
+          data: this.tvsDataSource.filteredData,
+          dataSelection: this.rowSelectionModel,
+        },
       });
       // this.printConfig.title = this.printConfig.title || this.tableName;
       // this.printConfig.direction = this.tableSetting.direction || "ltr";
@@ -659,8 +605,7 @@ extends TableCoreDirective<T>
     }
   }
 
-  rowMenuActionChange(contextMenuItem: ContextMenuItem, row: any)
-  {
+  rowMenuActionChange(contextMenuItem: ContextMenuItem, row: any) {
     this.onRowEvent.emit({
       event: "RowActionMenu",
       sender: { row: row, action: contextMenuItem },
@@ -668,10 +613,8 @@ extends TableCoreDirective<T>
     // this.rowActionMenuChange.emit({actionItem: contextMenuItem, rowItem: row });
   }
 
-  pagination_onChange(e: PageEvent)
-  {
-    if (this.pagingMode !== "none")
-    {
+  pagination_onChange(e: PageEvent) {
+    if (this.pagingMode !== "none") {
       this.pending = true;
       this.tvsDataSource.refreshFilterPredicate();
       this.pagination.length = e.length;
@@ -683,8 +626,7 @@ extends TableCoreDirective<T>
     }
   }
 
-  autoHeight()
-  {
+  autoHeight() {
     const minHeight =
       this.headerHeight +
       (this.rowHeight + 1) * this.dataSource.value.length +
@@ -692,33 +634,27 @@ extends TableCoreDirective<T>
     return minHeight.toString();
   }
 
-  reload_onClick()
-  {
+  reload_onClick() {
     this.onTableEvent.emit({ sender: null, event: "ReloadData" });
   }
 
   /////////////////////////////////////////////////////////////////
 
-  onResizeColumn(event: MouseEvent, index: number, type: "left" | "right")
-  {
+  onResizeColumn(event: MouseEvent, index: number, type: "left" | "right") {
     this.resizeColumn.resizeHandler = type;
     this.resizeColumn.startX = event.pageX;
-    if (this.resizeColumn.resizeHandler === "right")
-    {
+    if (this.resizeColumn.resizeHandler === "right") {
       this.resizeColumn.startWidth = (
         event.target as Node
       ).parentElement.clientWidth;
       this.resizeColumn.columnIndex = index;
-    } else
-    {
+    } else {
       if (
         (event.target as Node).parentElement.previousElementSibling === null
-      )
-      {
+      ) {
         /* for first column not resize */
         return;
-      } else
-      {
+      } else {
         this.resizeColumn.startWidth = (
           event.target as Node
         ).parentElement.previousElementSibling.clientWidth;
@@ -729,31 +665,25 @@ extends TableCoreDirective<T>
     this.mouseMove(index);
   }
 
-  mouseMove(index: number)
-  {
+  mouseMove(index: number) {
     this.resizableMousemove = this.renderer.listen(
       "document",
       "mousemove",
-      (event) =>
-      {
-        if (this.resizeColumn.resizeHandler !== null && event.buttons)
-        {
+      (event) => {
+        if (this.resizeColumn.resizeHandler !== null && event.buttons) {
           const rtl = this.direction === "rtl" ? -1 : 1;
           let width = 0;
-          if (this.resizeColumn.resizeHandler === "right")
-          {
+          if (this.resizeColumn.resizeHandler === "right") {
             const dx = event.pageX - this.resizeColumn.startX;
             width = this.resizeColumn.startWidth + rtl * dx;
-          } else
-          {
+          } else {
             const dx = this.resizeColumn.startX - event.pageX;
             width = this.resizeColumn.startWidth - rtl * dx;
           }
           if (
             this.resizeColumn.columnIndex === index &&
             width > this.minWidth
-          )
-          {
+          ) {
             // this.resizeColumn.columnIndex = index;
             this.resizeColumn.widthUpdate.next({
               e: this.resizeColumn,
@@ -766,10 +696,8 @@ extends TableCoreDirective<T>
     this.resizableMouseup = this.renderer.listen(
       "document",
       "mouseup",
-      (event) =>
-      {
-        if (this.resizeColumn.resizeHandler !== null)
-        {
+      (event) => {
+        if (this.resizeColumn.resizeHandler !== null) {
           this.resizeColumn.resizeHandler = null;
           this.resizeColumn.columnIndex = -1;
           /* fix issue sticky column */
@@ -781,31 +709,25 @@ extends TableCoreDirective<T>
     );
   }
 
-  public expandRow(rowIndex: number, mode: boolean = true)
-  {
-    if (rowIndex === null || rowIndex === undefined)
-    {
+  public expandRow(rowIndex: number, mode: boolean = true) {
+    if (rowIndex === null || rowIndex === undefined) {
       throw "Row index is not defined.";
     }
-    if (this.expandedElement === this.tvsDataSource.allData[rowIndex])
-    {
+    if (this.expandedElement === this.tvsDataSource.allData[rowIndex]) {
       this.expandedElement.option.expand = mode;
       this.expandedElement =
         this.expandedElement === this.tvsDataSource.allData[rowIndex]
           ? null
           : this.tvsDataSource.allData[rowIndex];
-    } else
-    {
+    } else {
       if (
         this.expandedElement &&
         this.expandedElement !== this.tvsDataSource.allData[rowIndex]
-      )
-      {
+      ) {
         this.expandedElement.option.expand = false;
       }
       this.expandedElement = null;
-      if (mode === true)
-      {
+      if (mode === true) {
         this.expandedElement =
           this.expandedElement === this.tvsDataSource.allData[rowIndex]
             ? null
@@ -813,8 +735,7 @@ extends TableCoreDirective<T>
         if (
           this.expandedElement.option === undefined ||
           this.expandedElement.option === null
-        )
-        {
+        ) {
           this.expandedElement.option = { expand: false };
         }
         this.expandedElement.option.expand = true;
@@ -822,30 +743,25 @@ extends TableCoreDirective<T>
     }
   }
 
-  onRowSelection(e, row, column: TableField<T>)
-  {
+  onRowSelection(e, row, column: TableField<T>) {
     if (
       this.rowSelectionMode &&
       this.rowSelectionMode !== "none" &&
       column.rowSelectable !== false
-    )
-    {
+    ) {
       this.onRowSelectionChange(e, row);
     }
   }
 
-  onCellClick(e, row, column: TableField<T>)
-  {
-    if (column.cellTooltipEnable === true)
-    {
+  onCellClick(e, row, column: TableField<T>) {
+    if (column.cellTooltipEnable === true) {
       this.closeTooltip(); /* Fixed BUG: Open Overlay when redirect to other route */
     }
     this.onRowSelection(e, row, column);
     if (
       column.clickable !== false &&
       (column.clickType === null || column.clickType === "cell")
-    )
-    {
+    ) {
       this.onRowEvent.emit({
         event: "CellClick",
         sender: { row: row, column: column },
@@ -853,10 +769,8 @@ extends TableCoreDirective<T>
     }
   }
 
-  onLabelClick(e, row, column: TableField<T>)
-  {
-    if (column.clickable !== false && column.clickType === "label")
-    {
+  onLabelClick(e, row, column: TableField<T>) {
+    if (column.clickable !== false && column.clickType === "label") {
       this.onRowEvent.emit({
         event: "LabelClick",
         sender: { row: row, column: column, e: e },
@@ -864,34 +778,28 @@ extends TableCoreDirective<T>
     }
   }
 
-  onRowDblClick(e, row)
-  {
+  onRowDblClick(e, row) {
     this.onRowEvent.emit({ event: "DoubleClick", sender: { row: row, e: e } });
   }
 
-  onRowClick(e, row)
-  {
+  onRowClick(e, row) {
     this.onRowEvent.emit({ event: "RowClick", sender: { row: row, e: e } });
   }
 
   /************************************ Drag & Drop Column *******************************************/
 
-  dragStarted(event: CdkDragStart)
-  {
+  dragStarted(event: CdkDragStart) {
     // this.dragDropData.dragColumnIndex = event.source.;
   }
 
-  dropListDropped(event: CdkDragDrop<string[]>)
-  {
-    if (event)
-    {
+  dropListDropped(event: CdkDragDrop<string[]>) {
+    if (event) {
       this.dragDropData.dropColumnIndex = event.currentIndex;
       this.moveColumn(event.previousIndex, event.currentIndex);
     }
   }
 
-  drop(event: CdkDragDrop<string[]>)
-  {
+  drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(
       event.container.data,
       event.previousIndex,
@@ -903,13 +811,10 @@ extends TableCoreDirective<T>
   }
   /************************************  *******************************************/
 
-  copyProperty(from: any, to: any)
-  {
+  copyProperty(from: any, to: any) {
     const keys = Object.keys(from);
-    keys.forEach((key) =>
-    {
-      if (from[key] !== undefined && from[key] === null)
-      {
+    keys.forEach((key) => {
+      if (from[key] !== undefined && from[key] === null) {
         to[key] = Array.isArray(from[key])
           ? Object.assign([], from[key])
           : Object.assign({}, from[key]);

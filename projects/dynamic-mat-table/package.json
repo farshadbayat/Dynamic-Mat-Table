@@ -13,10 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/farshadbayat/dynamic-mat-table-workspace"
+    "url": "https://github.com/martin-trajanovski/dynamic-mat-table-workspace"
   },
   "bugs": {
-    "url": "https://github.com/farshadbayat/dynamic-mat-table-workspace/issues"
+    "url": "https://github.com/martin-trajanovski/dynamic-mat-table-workspace/issues"
   },
   "keywords": [
     "angular",
@@ -24,10 +24,6 @@
     "angular2",
     "advance table",
     "high performance",
-    "multi language",
-    "rtl support",
-    "persian",
-    "arabic",
     "configurable setting",
     "material",
     "virtual scroll",

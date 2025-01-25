@@ -64,7 +64,7 @@ mat-row {
 }
 
 mat-row,
-tr.mat-header-row,
+mat-header-row,
 mat-footer-row {
   display: flex;
   border-width: 0;
@@ -128,6 +128,10 @@ cdk-virtual-scroll-viewport {
   background-color: white;
 }
 
+.mdc-data-table__header-cell {
+  padding: 0;
+}
+
 // Table Column Select
 .row-checkbox {
   padding-left: 0 !important;
@@ -151,7 +155,7 @@ cdk-virtual-scroll-viewport {
 }
 
 .column-icon {
-  :host .mat-header-row > .mat-header-cell:hover & {
+  :host mat-header-row > .mat-header-cell:hover & {
     opacity: 0;
     transform: translateY(5px);
     transition: all 0.2s;
@@ -162,7 +166,7 @@ cdk-virtual-scroll-viewport {
   position: absolute;
   @include header-icon-base;
   cursor: move;
-  :host .mat-header-row > .mat-header-cell:hover & {
+  :host mat-header-row > .mat-header-cell:hover & {
     opacity: 1;
     pointer-events: fill;
     transform: translateY(0px);

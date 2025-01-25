@@ -7,24 +7,15 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "module": "es2020",
+    "module": "es2022",
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "dynamic-mat-table": [
-        "dist/dynamic-mat-table"
-      ],
-      "dynamic-mat-table/*": [
-        "dist/dynamic-mat-table/*"
-      ]
+      "dynamic-mat-table": ["dist/dynamic-mat-table"],
+      "dynamic-mat-table/*": ["dist/dynamic-mat-table/*"]
     }
   },
   "angularCompilerOptions": {

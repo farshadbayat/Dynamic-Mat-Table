@@ -1,72 +1,21 @@
+/* Add application styles & imports to this file! */
+// @import "@angular/material/prebuilt-themes/deeppurple-amber.css";
 /* You can add global styles to this file, and also import other style files */
 
-html, body {
-    height: 100%;
-    scroll-behavior: smooth;
-}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-
-.cell-tooltip {
-  pointer-events: none;
-  max-width: 200px;
-  background-color: #000000b3;
-  border: solid 1px black;
-  color: white;
-  border-radius: 8px;
-  margin: 0 5px;
-  font-size: 14px;
-}
-
-.custom-header {
-  background: linear-gradient(0deg, rgb(214, 211, 10) 0%, #d6a609 50%, rgb(219, 223, 16) 100%) !important;
-  .mat-sort-header-container, .mat-menu-trigger {
-    color: white !important;
-    .mat-sort-header-arrow {
-      color: white !important;
-    }
-  }
-  header-filter {
-    .drag-indicator {
-      color: yellow !important;
-    }
-  }
-}
-
-
-/********* Table Style *********/
-dynamic-mat-table {
-  height: calc( 100vh - 217px);
-  border-top: solid 1px #d2d2d2;
-}
-
-mat-cell:first-child {
-  label:not(.mat-checkbox-layout) {
-    margin-left: 8px;
-    width: 100%;
-  }
-}
-
-mat-cell:not(:first-child):not(:last-child)::before, mat-header-cell:not(:first-child):not(:last-child)::before {
-  content: '';
+html,
+body {
   height: 100%;
-  border-right: solid 1px #c3c3c3;
 }
-/* not work in ltr */
-// mat-cell:not(:first-child):not(:last-child)::before {
-// 	width: 20px;
-// }
-
-mat-header-cell table-menu .mat-icon-button .main-menu {
-  width: 24px!important;
-  //line-height: 42px!important;
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-mat-header-row {
-  border-top: solid 1px #e3e3e3 !important;
-  background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(227,227,227,1) 50%, rgba(255,255,255,1) 100%) !important;
+html,
+body {
+  height: 100%;
 }
-
-mat-row:hover {
-background: linear-gradient( 0deg, #e1f5ff 0%, #a3c6e2 50%, #e1f5ff 100%) !important;
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

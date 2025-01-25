@@ -11,7 +11,6 @@ import
 import {moveItemInArray, CdkDragDrop} from '@angular/cdk/drag-drop';
 import {TableService} from '../../dynamic-mat-table.service';
 import {TableSetting} from '../../../models/table-setting.model';
-import {TableIntl} from '../../../international/table-Intl';
 import {deepClone, isNullorUndefined} from '../../../cores/type';
 import {AbstractField} from '../../../models/table-field.model';
 
@@ -61,7 +60,6 @@ export class TableMenuComponent {
   currentTableSetting: TableSetting;
 
   constructor(
-    public languagePack: TableIntl,
     public tableService: TableService
   ) {
   }
